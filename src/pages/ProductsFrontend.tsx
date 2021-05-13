@@ -1,55 +1,33 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import { Product } from "../models/product";
+import Products from "./Products";
 
 const ProductsFrontend = () => {
+	const [allProducts, setAllProducts] = useState<Product[]>([]);
+	const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+	const [filters, setFilters] = useState({
+		s: "",
+	});
+	useEffect(() => {
+		(async () => {
+			const { data } = await axios.get("products/frontend");
+			setAllProducts(data);
+			setFilteredProducts(data);
+		})();
+	}, []);
+	useEffect(() => {
+		let products = allProducts.filter(
+			(p) =>
+				p.title.toLowerCase().indexOf(filters.s.toLowerCase()) >= 0 ||
+				p.description.toLowerCase().indexOf(filters.s.toLowerCase()) >= 0
+		);
+		setFilteredProducts(products);
+	}, [filters]);
 	return (
 		<Layout>
-			<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-				<div className="col">
-					<div className="card shadow-sm">
-						<svg
-							className="bd-placeholder-img card-img-top"
-							width="100%"
-							height="225"
-							xmlns="http://www.w3.org/2000/svg"
-							role="img"
-							aria-label="Placeholder: Thumbnail"
-							preserveAspectRatio="xMidYMid slice"
-							focusable="false"
-						>
-							<title>Placeholder</title>
-							<rect width="100%" height="100%" fill="#55595c" />
-							<text x="50%" y="50%" fill="#eceeef" dy=".3em">
-								Thumbnail
-							</text>
-						</svg>
-
-						<div className="card-body">
-							<p className="card-text">
-								This is a wider card with supporting text below as a natural lead-in
-								to additional content. This content is a little bit longer.
-							</p>
-							<div className="d-flex justify-content-between align-items-center">
-								<div className="btn-group">
-									<button
-										type="button"
-										className="btn btn-sm btn-outline-secondary"
-									>
-										View
-									</button>
-									<button
-										type="button"
-										className="btn btn-sm btn-outline-secondary"
-									>
-										Edit
-									</button>
-								</div>
-								<small className="text-muted">9 mins</small>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<Products products={filteredProducts} filters={filters} setFilters={setFilters} />
 		</Layout>
 	);
 };
