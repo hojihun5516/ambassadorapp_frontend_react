@@ -8,7 +8,13 @@ const Products = (props: {
 	setFilters: (filters: Filters) => void;
 }) => {
 	const search = (s: string) => {
-		props.setFilters({ s });
+		props.setFilters({ ...props.filters, s });
+	};
+	const sort = (sort: string) => {
+		props.setFilters({
+			...props.filters,
+			sort,
+		});
 	};
 	return (
 		<>
@@ -19,6 +25,13 @@ const Products = (props: {
 					placeholder="Search"
 					onChange={(e) => search(e.target.value)}
 				/>
+				<div className="input-group-append">
+					<select className="form-select" onChange={(e) => sort(e.target.value)}>
+						<option>Select</option>
+						<option value="asc">Price Ascending</option>
+						<option value="desc">Price Descending</option>
+					</select>
+				</div>
 			</div>
 			<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 				{props.products.map((product) => {
