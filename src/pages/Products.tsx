@@ -6,16 +6,36 @@ const Products = (props: {
 	products: Product[];
 	filters: Filters;
 	setFilters: (filters: Filters) => void;
+	lastPage: number;
 }) => {
 	const search = (s: string) => {
-		props.setFilters({ ...props.filters, s });
+		props.setFilters({ ...props.filters, s, page: 1 });
 	};
 	const sort = (sort: string) => {
 		props.setFilters({
 			...props.filters,
 			sort,
+			page: 1,
 		});
 	};
+	const load = () => {
+		props.setFilters({
+			...props.filters,
+			page: props.filters.page + 1,
+		});
+	};
+	let button;
+
+	if (props.filters.page != props.lastPage) {
+		console.log(props);
+		button = (
+			<div className="d-flex justify-content-center mt-4">
+				<button className="btn btn-primary" onClick={load}>
+					Load More
+				</button>
+			</div>
+		);
+	}
 	return (
 		<>
 			<div className="col-md-12 mb-4 input-group">
@@ -50,6 +70,7 @@ const Products = (props: {
 					);
 				})}
 			</div>
+			{button}
 		</>
 	);
 };
